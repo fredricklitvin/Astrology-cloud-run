@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app, origins="*", methods=["GET", "POST", "OPTIONS"], allow_headers="*")
 
 
-db = firestore.Client(project="astrology-db-test")
+db = firestore.Client(project="i-agility-465314-p6")
 
 ZODIAC_SIGNS = [
     ("capricorn", (1, 19)), ("aquarius", (2, 18)), ("pisces", (3, 20)),
