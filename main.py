@@ -26,7 +26,7 @@ def zodiac_handler():
     
     sign = get_zodiac(month, day)
     
-    doc = db.collection("zodiacs").document("zodiacs").get()
+    doc = db.collection("zodiacs").document(sign).get()
     if doc.exists:
         sign_info = doc.to_dict().get(sign, "No data found for this sign.")
     else:
