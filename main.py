@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from google.cloud import firestore
 
 app = Flask(__name__)
+CORS(app, origins="*", methods=["GET", "POST", "OPTIONS"], allow_headers="*")
+
 db = firestore.Client(database="astrology-db-test")
 
 ZODIAC_SIGNS = [
@@ -18,21 +21,27 @@ def get_zodiac(month, day):
             return sign
     return "capricorn"
 
-@app.route("/zodiac", methods=["POST"])
+@app.route("/zodiac", methods=["POST", "OPTIONS"])
 def zodiac_handler():
+    if request.method == "OPTIONS":
+        # CORS preflight response
+        response = jsonify({})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        return response, 204
+
     data = request.get_json()
     month = int(data.get("month"))
     day = int(data.get("day"))
     
     sign = get_zodiac(month, day)
-    
     doc = db.collection("zodiacs").document(sign).get()
     if doc.exists:
         sign_info = doc.to_dict().get("description", "No description found.")
     else:
         sign_info = "Zodiac data not found."
     
-    return jsonify({"sign": sign, "info": sign_info})
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    response = jsonify({"sign": sign, "info": sign_info})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
