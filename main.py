@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from google.cloud import firestore
 
 app = Flask(__name__)
-db = firestore.Client()
+db = firestore.Client(database="astrology-db-test")
 
 ZODIAC_SIGNS = [
     ("capricorn", (1, 19)), ("aquarius", (2, 18)), ("pisces", (3, 20)),
